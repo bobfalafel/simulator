@@ -12,7 +12,6 @@ const verifyToken = (req, res, next) => {
     const trader = jsonData.traders.find(trader => trader.id === verified.id);
     if (trader) {
       req.user = trader;
-      console.log(JSON.stringify(req.user)+' in middleware');
       next();
     } else {
       res.status(401).send('User not found.');

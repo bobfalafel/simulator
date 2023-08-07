@@ -8,9 +8,12 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import { SharesComponent } from './shares/shares.component';
+import { NavbarComponent } from './navbar/navbar.component';
+import { TradersComponent } from './traders/traders.component';
+import { RequestsComponent } from './requests/requests.component';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, HomeComponent, SharesComponent],
+  declarations: [AppComponent, LoginComponent, HomeComponent, SharesComponent, NavbarComponent, TradersComponent, RequestsComponent],
   imports: [BrowserModule, AppRoutingModule, FormsModule, HttpClientModule],
   providers: [],
   bootstrap: [AppComponent],

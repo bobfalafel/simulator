@@ -1,0 +1,17 @@
+<h2>List of traders</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Balance</th>
+            <!-- Add other headers here -->
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let trader of traders">
+            <td>{{ trader.name }}</td>
+            <td>{{ trader.money }}</td>
+            <!-- Add other columns here -->
+        </tr>
+    </tbody>
+</table>

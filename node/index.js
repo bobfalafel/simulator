@@ -9,6 +9,18 @@ const tokenValidator = 'tokenMaster';
 const jsonData = require('./BurseJson.json');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const fs = require('fs');
+
+let tradeIdCounter = 1; // Initialize the counter with a starting value
+
+function initializeTradeIds(){
+  jsonData.requests.forEach(item => {
+    item.id = tradeIdCounter; // Assign a unique ID
+    tradeIdCounter++; // Increment the counter for the next use
+  });
+}
+
+initializeTradeIds();
 
 const corsOptions = {
   origin: 'http://localhost:4200', // Specify the exact origin of your Angular app
@@ -21,6 +33,7 @@ app.use(cookieParser());
 
 let shares = jsonData.shares;
 let traders = jsonData.traders;
+let orders = jsonData.requests;
 
 function generateRandomInRange(min,max){
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -44,12 +57,10 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
-  console.log('here');
   const trader = traders.find(trader => trader.id === req.body.id);
   if (!trader) return res.status(400).send('Trader not found.');
   try {
     const token = jwt.sign({ id: trader.id }, tokenValidator);
-    console.log(token);
     res.cookie('burseToken', token, {sameSite: 'none', secure: true});
     res.send({data:'logged in!'});
   } catch (error) {
@@ -59,7 +70,6 @@ app.post('/login', async (req, res) => {
 
 app.get('/home', validateToken, async (req, res) => {
     const loggedTrader = req.user;
-    console.log(JSON.stringify(req.user) + ' in index');
     res.send(loggedTrader);
 });
 
@@ -71,6 +81,36 @@ app.get('/shares', (req, res) =>{
 app.get('/traders', (req, res) =>{
     res.send(traders);
 });
+
+app.get('/orders', (req, res) =>{
+    res.send(orders);
+});
+
+app.get('/logout', validateToken, (req, res) =>{
+  res.clearCookie('burseToken');
+  res.status(200).send('Logged out!');
+  res.redirect('/login');
+});
+
+app.post('/trade', validateToken, (req,res) =>{
+  let newOrder = {id: tradeIdCounter, owner: req.user.id, type: req.body.tradeType, share: req.body.shareName, amount: req.body.amount, price: req.body.pricePerUnit};
+  
+  jsonData.requests.forEach(item => {
+    if(item.owner === newOrder.owner && item.share === newOrder.share){
+      res.status(400).send("There is already an open request for that share for your account.");
+    }
+  });
+
+  jsonData.requests.push(newOrder);
+  tradeIdCounter++;
+  // fs.writeFile('./BurseJson.json', JSON.stringify(jsonData, null, 2), (err) => {
+  //   if (err) {
+  //     console.error('Error writing file:', err);
+  //     return;
+  //   }
+  //   console.log('New item added to data.json');
+  // });
+})
 
 app.listen(port, () => {
   console.log(`listening at http://localhost:${port}`);

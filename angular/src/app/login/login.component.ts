@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -9,7 +10,11 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   id = '';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   login() {
     this.http
@@ -21,6 +26,8 @@ export class LoginComponent {
       .subscribe(
         (response) => {
           console.log(response); // Handle response
+          console.log(this.authService.isLoggedIn$);
+          this.authService.setLoggedIn(true);
           this.router.navigate(['/home']);
         },
         (error) => {
