@@ -7,22 +7,28 @@ import { Router } from '@angular/router';
   templateUrl: './home.component.html',
 })
 export class HomeComponent implements OnInit {
-  loggedTrader: any;
-  shares: any[] = [];
-  ownedShares: any[] = [];
+  loggedTrader: any; // To store the logged-in trader's information
+  shares: any[] = []; // To store the list of available shares
+  ownedShares: any[] = []; // To store the list of shares owned by the trader
 
   constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit(): void {
+    // Fetch trader's information and share data when component initializes
     this.http
-      .get('http://localhost:3000/home', { withCredentials: true })
+      .get('http://localhost:3000/home', { withCredentials: true }) // Fetch user's data with credentials
       .subscribe(
         (response) => {
-          this.loggedTrader = response;
+          // Successful response handling
+          this.loggedTrader = response; // Store the trader's information
+
+          // Fetch the list of available shares
           this.http
             .get<any[]>('http://localhost:3000/shares')
             .subscribe((data) => {
-              this.shares = data;
+              this.shares = data; // Store the list of shares
+
+              // Modify owned shares data to display share names
               if (
                 this.loggedTrader.shares &&
                 this.loggedTrader.shares.length > 0
@@ -32,14 +38,15 @@ export class HomeComponent implements OnInit {
                     (share) => share.id === ownedShare.id
                   );
                   if (tempshare) {
-                    ownedShare.id = tempshare.name;
+                    ownedShare.id = tempshare.name; // Replace share ID with share name
                   }
                 });
               }
-              this.ownedShares = this.loggedTrader.shares;
+              this.ownedShares = this.loggedTrader.shares; // Store the owned shares data
             });
         },
         (error) => {
+          // Handle error cases
           this.handleError(error);
         }
       );
@@ -47,7 +54,7 @@ export class HomeComponent implements OnInit {
 
   handleError(error: any) {
     if (error.status === 401) {
-      // Redirect to the desired URL (e.g., login page)
+      // If unauthorized (status code 401), redirect to the login page
       this.router.navigate(['/login']);
     } else {
       // Handle other error cases

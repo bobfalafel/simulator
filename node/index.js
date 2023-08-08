@@ -1,18 +1,17 @@
 const express = require('express');
 const app = express();
-const path = require('path');
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const validateToken = require('./middleware/auth');
+const validateToken = require('./middleware/auth'); // Custom token validation middleware
 const port = 3000;
-const tokenValidator = 'tokenMaster';
-const jsonData = require('../BurseJson.json');
+const tokenValidator = 'tokenMaster'; // Token validation secret
+const jsonData = require('../BurseJson.json'); // JSON data containing traders, shares, and requests
 const cookieParser = require('cookie-parser');
-const cors = require('cors');
+const cors = require('cors'); // CORS middleware for handling cross-origin requests
 const fs = require('fs');
 
 let tradeIdCounter = 1; // Initialize the counter with a starting value
 
+// Function to initialize unique trade IDs
 function initializeTradeIds(){
   jsonData.requests.forEach(item => {
     item.id = tradeIdCounter; // Assign a unique ID
@@ -20,14 +19,18 @@ function initializeTradeIds(){
   });
 }
 
+// Function to perform a buy trade
 function performBuyTrade(buyer, seller, share, item) {
+  // Update share price and trader money
   jsonData.shares[jsonData.shares.indexOf(share)].currentPrice = item.price;
   jsonData.traders[jsonData.traders.indexOf(buyer)].money -= item.amount * item.price;
 
+  // Initialize shares array if not exists
   if (!buyer.shares) {
     buyer.shares = []; // Initialize the shares property if it's undefined
   }
 
+  // Find or add shares to the buyer
   let existingShare = buyer.shares.find(s => s.id === share.id);
   if (existingShare) {
     existingShare.amount += item.amount;
@@ -35,15 +38,20 @@ function performBuyTrade(buyer, seller, share, item) {
     buyer.shares.push({ id: share.id, amount: item.amount });
   }
 
+  // Update share amount
   jsonData.shares[jsonData.shares.indexOf(share)].amount -= item.amount;
   seller.money += item.amount * item.price;
 }
 
+// Function to perform a sell trade
 function performSellTrade(seller, share, item) {
+  // Find the existing share
   let existingShare = seller.shares.find(s => s.id === share.id);
   if (existingShare && existingShare.amount >= item.amount) {
+    // Update share price
     jsonData.shares[jsonData.shares.indexOf(share)].currentPrice = item.price;
 
+    // Update share amount and trader money
     existingShare.amount -= item.amount;
     if (existingShare.amount === 0) {
       seller.shares = seller.shares.filter(s => s.id !== share.id);
@@ -53,6 +61,7 @@ function performSellTrade(seller, share, item) {
   }
 }
 
+// Function to perform trades
 function preformTrades() {
   jsonData.requests.forEach(item => {
     let share = jsonData.shares.find(share => share.id === item.share);
@@ -77,30 +86,20 @@ function preformTrades() {
             );
           }
         } else {
-          jsonData.shares[jsonData.shares.indexOf(share)].currentPrice = item.price;
-        jsonData.traders[jsonData.traders.indexOf(buyer)].money -= item.amount * item.price;
-
-        let existingShare = buyer.shares.find(s => s.id === share.id);
-        if (existingShare) {
-          existingShare.amount += item.amount; // Add to existing shares
-        } else {
-          buyer.shares.push({ id: share.id, amount: item.amount }); // Push new share object
-        }
-
-        jsonData.shares[jsonData.shares.indexOf(share)].amount -= item.amount;
-        jsonData.requests = jsonData.requests.filter(request => request.id != item.id);
+          performBuyTrade(buyer, share, item);
+          jsonData.requests = jsonData.requests.filter(request => request.id !== item.id);
         }
       }
+
       if (item.type === "sell" && item.price <= share.currentPrice) {
-        // Perform sell trade logic
         let existingShare = buyer.shares.find(s => s.id === share.id);
         if (existingShare && existingShare.amount >= item.amount) {
           jsonData.shares[jsonData.shares.indexOf(share)].currentPrice = item.price;
           jsonData.traders[jsonData.traders.indexOf(buyer)].money += item.amount * item.price;
 
           existingShare.amount -= item.amount; // Subtract sold amount
-          if(existingShare.amount==0){
-            buyer.shares = buyer.shares.filter(s=> s.id !== share.id);
+          if (existingShare.amount == 0) {
+            buyer.shares = buyer.shares.filter(s => s.id !== share.id);
           }
           jsonData.shares[jsonData.shares.indexOf(share)].amount += item.amount;
           jsonData.requests = jsonData.requests.filter(request => request.id != item.id);
@@ -110,70 +109,34 @@ function preformTrades() {
   });
 }
 
-
-function preformTrades2() {
-  jsonData.requests.forEach(item => {
-    let share = jsonData.shares.find(share => share.id === item.share);
-    let owner = jsonData.traders.find(trader => trader.id === item.owner);
-
-    if (share && owner) {
-      if (item.type === "buy" && item.price >= share.currentPrice) {
-        // Perform buy trade logic
-        jsonData.shares[jsonData.shares.indexOf(share)].currentPrice = item.price;
-        jsonData.traders[jsonData.traders.indexOf(owner)].money -= item.amount * item.price;
-
-        let existingShare = owner.shares.find(s => s.id === share.id);
-        if (existingShare) {
-          existingShare.amount += item.amount; // Add to existing shares
-        } else {
-          owner.shares.push({ id: share.id, amount: item.amount }); // Push new share object
-        }
-
-        jsonData.shares[jsonData.shares.indexOf(share)].amount -= item.amount;
-        jsonData.requests = jsonData.requests.filter(request => request.id != item.id);
-      }
-
-      if (item.type === "sell" && item.price <= share.currentPrice) {
-        // Perform sell trade logic
-        let existingShare = owner.shares.find(s => s.id === share.id);
-        if (existingShare && existingShare.amount >= item.amount) {
-          jsonData.shares[jsonData.shares.indexOf(share)].currentPrice = item.price;
-          jsonData.traders[jsonData.traders.indexOf(owner)].money += item.amount * item.price;
-
-          existingShare.amount -= item.amount; // Subtract sold amount
-          if(existingShare.amount==0){
-            owner.shares = owner.shares.filter(s=> s.id !== share.id);
-          }
-          jsonData.shares[jsonData.shares.indexOf(share)].amount += item.amount;
-          jsonData.requests = jsonData.requests.filter(request => request.id != item.id);
-        }
-      }
-    }
-  });
-}
-
-
+// Initial trade processing and data setup
 preformTrades();
 initializeTradeIds();
 
+// CORS configuration
 const corsOptions = {
-  origin: 'http://localhost:4200', // Specify the exact origin of your Angular app
-  credentials: true, // Allow credentials (cookies)
+  origin: 'http://localhost:4200', // The exact origin of your Angular app
+  credentials: true, // Allow cookies
 };
 app.use(cors(corsOptions));
+
+// Middleware setup
 app.use(express.json());
 app.use(cookieParser());
 
-let traders = jsonData.traders;
-
+// Function to generate a random number within a specified range
 function generateRandomInRange(min,max){
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function changeShares() { //adds or subtracts up to 10% of each share randomly
+// Function to change share prices randomly within a 10% range
+function changeShares() { 
   for(let i=0; i<jsonData.shares.length;i++){
+    // Add or subtract a random value up to 10% of the current price
     jsonData.shares[i].currentPrice += Math.round(generateRandomInRange(-1 * (jsonData.shares[i].currentPrice/10+1), jsonData.shares[i].currentPrice/10+1))+1;
   }
+
+  // Perform trades and save updated data
   preformTrades();
   fs.writeFile('../BurseJson.json', JSON.stringify(jsonData, null, 2), (err) => {
     if (err) {
@@ -182,22 +145,17 @@ function changeShares() { //adds or subtracts up to 10% of each share randomly
     }
   });
 }
+
+// Interval for changing shares every 10 seconds
 const interval = 10000; // 10 seconds in milliseconds
 const intervalId = setInterval(changeShares, interval);
 
-app.get('/', async (req, res) => {
-  res.send('hello');
-});
-
-app.get('/login', (req, res) => {
-  //TODO login:: res.send('<div class="row">\n<div class="col-12 mt-3">\n<h1 class="display-3">How was that gut exam?</h1>\n<p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Beatae, perferendis!</p>\n</div>\n</div>\n<div class="row">\n<div class="col-lg-6">\n<form id="contact-form" action="" method="POST" novalidate="novalidate" autocomplete="off">\n<div class="form-group">\n<label for="email">* Email:</label>\n<input type="text" name="email" id="email" class="form-control">\n</div>\n<div class="form-group">\n<label for="password">* Password:</label>\n<input type="password" name="password" id="password" class="form-control">\n</div>\n<button type="submit" name="submit" value="Contact Me" class="btn btn-primary">Log in</button>\n</form>\n</div>\n</div>');
-  res.send('login page');
-});
-
+// Route to handle login attempts
 app.post('/login', async (req, res) => {
-  const trader = traders.find(trader => trader.id === req.body.id);
+  const trader = jsonData.traders.find(trader => trader.id === req.body.id);
   if (!trader) return res.status(400).send('Trader not found.');
   try {
+    // Generate a JWT token and send it in a cookie
     const token = jwt.sign({ id: trader.id }, tokenValidator);
     res.cookie('burseToken', token, {sameSite: 'none', secure: true});
     res.send({data:'logged in!'});
@@ -206,25 +164,29 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Route to display the user's home page
 app.get('/home', validateToken, async (req, res) => {
     const loggedTrader = req.user;
     res.send(loggedTrader);
 });
 
+// Route to make a request (with validation)
 app.get('/make-request', validateToken, async (req, res) => {
     const loggedTrader = req.user;
     res.send(loggedTrader);
 });
 
-
+// Route to fetch the list of shares
 app.get('/shares', (req, res) =>{
   res.send(jsonData.shares);
 });
 
+// Route to fetch the list of traders
 app.get('/traders', (req, res) =>{
-  res.send(traders);
+  res.send(jsonData.traders);
 });
 
+// Route to fetch and send modified requests data
 app.get('/requests', (req, res) =>{
   let sendRequests = [];
   jsonData.requests.forEach(item => {
@@ -244,43 +206,49 @@ app.get('/requests', (req, res) =>{
   res.send(sendRequests);
 });
 
+// Route to perform logout (with validation)
 app.get('/logout', validateToken, (req, res) =>{
   res.clearCookie('burseToken');
   res.status(200).send('Logged out!');
   res.redirect('/login');
 });
 
+// Route to create a new trade request (with validation)
 app.post('/trade', validateToken, (req,res) =>{
+  // Create a new trade order based on request data
   let newOrder = {id: tradeIdCounter, owner: req.user.id, type: req.body.tradeType, share: req.body.shareName, amount: req.body.amount, price: req.body.pricePerUnit};
   let hasDuplicate =false;
 
-  if(newOrder.type === "sell"){
-    try{
-      let ownedShares = req.user.shares.find(share => share.id === newOrder.share);
-      if(ownedShares){
-        if(ownedShares.amount < newOrder.amount){
-          throw new Error("This is the error message.");
-        }
-      }
-    }
-    catch{
-      res.status(400).send("You don't own enough shares to sell");
-      return;
-    }
-  }
-  else{
-    if(newOrder.amount* newOrder.price > req.user.money){
-      res.status(400).send("You don't own enough money to buy");
-      return;
-    }
-  }
-
+  // Check for duplicate open requests
   jsonData.requests.forEach(item => {
     if(item.owner === newOrder.owner && item.share === newOrder.share){
       hasDuplicate = true;
     }
   });
+
+  // Validate and process the new trade order
+  if(newOrder.type === "sell"){
+    // Validation for sell orders
+        try {
+            let ownedShares = req.user.shares.find(share => share.id === newOrder.share);
+            if (ownedShares && ownedShares.amount < newOrder.amount) {
+                throw new Error("You don't own enough shares to sell");
+            }
+        } catch {
+            res.status(400).send("You don't own enough shares to sell");
+            return;
+        }
+  }
+  else{
+    // Validation for buy orders
+    if (newOrder.amount * newOrder.price > req.user.money) {
+        res.status(400).send("You don't own enough money to buy");
+        return;
+    }
+  }
+
   
+  // Further validations and processing
   if (newOrder.price == 0){
     res.status(400).send("Price cannot be 0.");
     return;
@@ -293,9 +261,12 @@ app.post('/trade', validateToken, (req,res) =>{
     res.status(400).send("There is already an open request for that share for your account.");
     return;
   }
+
+  // Add the new trade order to the requests
   jsonData.requests.push(newOrder);
   tradeIdCounter++;
-  //TODO this works just un// it so it can save :)
+
+  // Perform trades and save updated data
   preformTrades();
   fs.writeFile('../BurseJson.json', JSON.stringify(jsonData, null, 2), (err) => {
     if (err) {
@@ -303,8 +274,13 @@ app.post('/trade', validateToken, (req,res) =>{
        return;
     }
   });
+
+  // Respond with success
+  res.status(200).send({ body: 'Trade order created successfully' });
+
 })
 
+// Route to fetch user's trade requests (with validation)
 app.get('/my-requests', validateToken, (req, res) =>{
   let userRequests = [];
   jsonData.requests.forEach(item => {
@@ -320,11 +296,15 @@ app.get('/my-requests', validateToken, (req, res) =>{
   res.status(200).send(userRequests);
 });
 
+// Route to delete a specific trade request of the user (with validation)
 app.post('/my-requests', validateToken, (req, res) =>{
+  // Filter out the specified trade request from the user's requests
   jsonData.requests =jsonData.requests.filter(request => request.id != req.body.id);
-  res.status(200).send({body:'did good'});
+  // Respond with success
+  res.status(200).send({ body: 'Trade request deleted successfully' });
 });
 
+// Start the server
 app.listen(port, () => {
   console.log(`listening at http://localhost:${port}`);
 });

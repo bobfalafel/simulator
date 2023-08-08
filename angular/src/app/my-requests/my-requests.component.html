@@ -11,14 +11,14 @@
         </tr>
     </thead>
     <tbody>
+        <!-- Loop through each request and display its details -->
         <tr *ngFor="let request of requests">
             <td>{{ request.type }}</td>
             <td>{{ request.share }}</td>
             <td>{{ request.amount }}</td>
             <td>{{ request.price }}</td>
             <td>{{ request.amount * request.price }}</td>
-            <td (click)="removeRequest(request.id)">Delete</td>
-            <!-- Add other columns here -->
+            <td (click)="removeRequest(request.id)">Delete</td> <!-- Call removeRequest function on click -->
         </tr>
     </tbody>
 </table>

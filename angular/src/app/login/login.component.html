@@ -1,5 +1,12 @@
+<!-- Form to initiate the login process when submitted using 'login()' method -->
 <form (ngSubmit)="login()">
-    <label for="id">ID:</label>
-    <input type="text" id="id" name="id" [(ngModel)]="id">
-    <button type="submit">Login</button>
+
+  <!-- Label for the input field -->
+  <label for="id">ID:</label>
+  
+  <!-- Input field for the trader's ID, bound to the 'id' property using two-way data binding [(ngModel)] -->
+  <input type="text" id="id" name="id" [(ngModel)]="id">
+  
+  <!-- Button to submit the form and trigger the 'login()' method -->
+  <button type="submit">Login</button>
 </form>

@@ -7,17 +7,18 @@ import { Router } from '@angular/router';
   templateUrl: './make-request.component.html',
 })
 export class MakeRequestComponent implements OnInit {
-  shares: any[] = [];
-  loggedTrader: any;
-  tradeType = 'buy';
-  shareName = '';
-  amount: number = 0;
-  pricePerUnit: number = 0;
-  overallPrice: number = 0;
+  shares: any[] = []; // Array to hold share data
+  loggedTrader: any; // Holds logged trader data
+  tradeType = 'buy'; // Default trade type
+  shareName = ''; // Holds selected share name
+  amount: number = 0; // Holds selected amount
+  pricePerUnit: number = 0; // Holds selected price per unit
+  overallPrice: number = 0; // Holds calculated overall price
 
   constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit() {
+    // Fetch logged trader data
     this.http
       .get('http://localhost:3000/make-request', { withCredentials: true })
       .subscribe(
@@ -28,11 +29,14 @@ export class MakeRequestComponent implements OnInit {
           this.handleError(error);
         }
       );
+
+    // Fetch available shares data
     this.http.get<any[]>('http://localhost:3000/shares').subscribe((data) => {
       this.shares = data;
     });
   }
 
+  // Handle error responses
   handleError(error: any) {
     if (error.status === 401) {
       // Redirect to the desired URL (e.g., login page)
@@ -43,6 +47,7 @@ export class MakeRequestComponent implements OnInit {
     }
   }
 
+  // Submit trade request form
   submitForm() {
     const tradeData = {
       tradeType: this.tradeType,
@@ -52,6 +57,7 @@ export class MakeRequestComponent implements OnInit {
       overallPrice: this.overallPrice,
     };
 
+    // Send trade data to the server
     this.http
       .post('http://localhost:3000/trade', tradeData, { withCredentials: true })
       .subscribe(
@@ -62,6 +68,8 @@ export class MakeRequestComponent implements OnInit {
           console.error(error.error); // Handle error
         }
       );
+
+    // Reset form values
     this.tradeType = 'buy';
     this.shareName = '';
     this.amount = 0;
@@ -69,6 +77,7 @@ export class MakeRequestComponent implements OnInit {
     this.overallPrice = 0;
   }
 
+  // Calculate overall price based on amount and price per unit
   calculateOverallPrice() {
     if (this.amount && this.pricePerUnit) {
       this.overallPrice = this.amount * this.pricePerUnit;

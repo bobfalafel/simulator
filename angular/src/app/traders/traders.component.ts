@@ -7,13 +7,15 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./traders.component.css'],
 })
 export class TradersComponent implements OnInit {
-  traders: any[] = [];
+  traders: any[] = []; // Initialize an empty array to store traders' data
 
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
+    // When the component initializes...
     this.http.get<any[]>('http://localhost:3000/traders').subscribe((data) => {
-      this.traders = data;
+      // Use the HttpClient to make an HTTP GET request to fetch traders' data
+      this.traders = data; // Assign the fetched traders' data to the 'traders' array
     });
   }
 }

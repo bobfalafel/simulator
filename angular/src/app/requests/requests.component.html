@@ -12,13 +12,12 @@
     </thead>
     <tbody>
         <tr *ngFor="let request of requests">
-            <td>{{ request.owner }}</td>
-            <td>{{ request.type }}</td>
-            <td>{{ request.share }}</td>
-            <td>{{ request.amount }}</td>
-            <td>{{ request.price }}</td>
-            <td>{{ request.amount * request.price }}</td>
-            <!-- Add other columns here -->
+            <td>{{ request.owner }}</td> <!-- Display the owner (trader) of the request -->
+            <td>{{ request.type }}</td> <!-- Display the type of the request (buy/sell) -->
+            <td>{{ request.share }}</td> <!-- Display the share name in the request -->
+            <td>{{ request.amount }}</td> <!-- Display the amount in the request -->
+            <td>{{ request.price }}</td> <!-- Display the price per unit in the request -->
+            <td>{{ request.amount * request.price }}</td> <!-- Calculate and display the overall price -->
         </tr>
     </tbody>
 </table>

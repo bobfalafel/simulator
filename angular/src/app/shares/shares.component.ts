@@ -7,13 +7,14 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./shares.component.css'],
 })
 export class SharesComponent implements OnInit {
-  shares: any[] = [];
+  shares: any[] = []; // Initialize an empty array to hold share data
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {} // Inject the HttpClient service
 
   ngOnInit() {
+    // Fetch share data from the server when the component initializes
     this.http.get<any[]>('http://localhost:3000/shares').subscribe((data) => {
-      this.shares = data;
+      this.shares = data; // Assign the fetched data to the 'shares' array
     });
   }
 }

@@ -4,14 +4,13 @@
         <tr>
             <th>Name</th>
             <th>Current Price</th>
-            <!-- Add other headers here -->
         </tr>
     </thead>
     <tbody>
+        <!-- Loop through each 'share' in the 'shares' array -->
         <tr *ngFor="let share of shares">
-            <td>{{ share.name }}</td>
-            <td>{{ share.currentPrice }}</td>
-            <!-- Add other columns here -->
+            <td>{{ share.name }}</td> <!-- Display the share's name -->
+            <td>{{ share.currentPrice }}</td> <!-- Display the share's current price -->
         </tr>
     </tbody>
 </table>

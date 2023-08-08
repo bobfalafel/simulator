@@ -1,20 +1,28 @@
+<!-- Display a welcome message and trader's details if 'loggedTrader' is defined -->
+<div *ngIf="loggedTrader">
+    Welcome, {{ loggedTrader.name }}.<br>
+    You have {{ loggedTrader.money }}$ remaining.
+</div>
 
-<div *ngIf="loggedTrader">Welcome, {{ loggedTrader.name }}.<br>You have {{ loggedTrader.money }}$ remaining.</div>
-
+<!-- Display a heading for the list of owned shares -->
 <h2>List of Owned Shares</h2>
+
+<!-- Create a table to display the owned shares -->
 <table>
+    <!-- Table header -->
     <thead>
         <tr>
-            <th>Name</th>
-            <th>Amount Owned</th>
-            <!-- Add other headers here -->
+            <th>Name</th> <!-- Displayed as the header for the first column -->
+            <th>Amount Owned</th> <!-- Displayed as the header for the second column -->
         </tr>
     </thead>
+
+    <!-- Table body, data is shown if 'ownedShares' is defined -->
     <tbody *ngIf="ownedShares">
+        <!-- Loop through each owned share and create a table row for it -->
         <tr *ngFor="let share of ownedShares">
-            <td>{{ share.id }}</td>
-            <td>{{ share.amount }}</td>
-            <!-- Add other columns here -->
+            <td>{{ share.id }}</td> <!-- Display the share's ID in this column -->
+            <td>{{ share.amount }}</td> <!-- Display the amount of the share owned in this column -->
         </tr>
     </tbody>
 </table>

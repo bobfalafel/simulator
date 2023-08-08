@@ -1,6 +1,10 @@
+<!-- This div displays a welcome message if the 'loggedTrader' property is truthy -->
 <div *ngIf="loggedTrader">Welcome, {{ loggedTrader.name }}</div>
-<!-- only shows if logged -->
+
+<!-- Form to submit a trade request when submitted using 'submitForm()' method -->
 <form (ngSubmit)="submitForm()" #tradeForm="ngForm">
+
+    <!-- Dropdown select for choosing the trade type -->
     <div>
         <label for="tradeType">Trade Type:</label>
         <select id="tradeType" name="tradeType" [(ngModel)]="tradeType" required>
@@ -8,25 +12,35 @@
             <option value="sell">Sell</option>
         </select>
     </div>
+
+    <!-- Dropdown select for choosing the share name -->
     <div>
         <label for="shareName">Share Name:</label>
         <select id="shareName" name="shareName" [(ngModel)]="shareName" required>
+            <!-- Loop through each 'share' and create an option for each -->
             <option *ngFor="let share of shares" [value]="share.id">{{ share.name }}</option>
-            <!-- Add other share options here -->
         </select>
     </div>
+
+    <!-- Input field for specifying the amount of shares -->
     <div>
         <label for="amount">Amount:</label>
         <input type="number" id="amount" name="amount" [(ngModel)]="amount" (input)="calculateOverallPrice()" required>
     </div>
+
+    <!-- Input field for specifying the price per unit -->
     <div>
         <label for="pricePerUnit">Price Per Unit:</label>
         <input type="number" id="pricePerUnit" name="pricePerUnit" [(ngModel)]="pricePerUnit"
             (input)="calculateOverallPrice()" required>
     </div>
+
+    <!-- Input field for displaying the calculated overall price (read-only) -->
     <div>
         <label for="overallPrice">Overall Price:</label>
         <input type="number" id="overallPrice" name="overallPrice" [(ngModel)]="overallPrice" readonly>
     </div>
+
+    <!-- Button to submit the form and trigger the 'submitForm()' method -->
     <button type="submit" [disabled]="tradeForm.invalid">Submit</button>
 </form>

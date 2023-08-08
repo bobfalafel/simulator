@@ -4,14 +4,15 @@
         <tr>
             <th>Name</th>
             <th>Balance</th>
-            <!-- Add other headers here -->
         </tr>
     </thead>
     <tbody>
+        <!-- Loop through each trader in the traders array -->
         <tr *ngFor="let trader of traders">
+            <!-- Display the trader's name in a table cell -->
             <td>{{ trader.name }}</td>
+            <!-- Display the trader's balance in a table cell -->
             <td>{{ trader.money }}</td>
-            <!-- Add other columns here -->
         </tr>
     </tbody>
 </table>
