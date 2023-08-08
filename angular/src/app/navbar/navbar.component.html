@@ -4,6 +4,8 @@
         <li><a routerLink="/shares">Shares</a></li>
         <li><a routerLink="/traders">Traders</a></li>
         <li *ngIf="isLoggedIn"><a routerLink="/requests">Requests</a></li>
+        <li *ngIf="isLoggedIn"><a routerLink="/my-requests">My Requests</a></li>
+        <li *ngIf="isLoggedIn"><a routerLink="/make-request">Make a Request</a></li>
         <li *ngIf="isLoggedIn"><a (click)="logout()" routerLink="/login">Logout</a></li>
         <li *ngIf="!isLoggedIn"><a routerLink="/login">Log in</a></li>
     </ul>

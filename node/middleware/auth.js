@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const express = require('express');
 const tokenValidator = 'tokenMaster';
-const jsonData = require('../BurseJson.json');
+const jsonData = require('../../BurseJson.json');
 
 const verifyToken = (req, res, next) => {
   const token = req.cookies.burseToken;
@@ -13,8 +13,6 @@ const verifyToken = (req, res, next) => {
     if (trader) {
       req.user = trader;
       next();
-    } else {
-      res.status(401).send('User not found.');
     }
   } catch (error) {
     res.status(400).send('Invalid token.');

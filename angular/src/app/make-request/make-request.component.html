@@ -1,0 +1,32 @@
+<div *ngIf="loggedTrader">Welcome, {{ loggedTrader.name }}</div>
+<!-- only shows if logged -->
+<form (ngSubmit)="submitForm()" #tradeForm="ngForm">
+    <div>
+        <label for="tradeType">Trade Type:</label>
+        <select id="tradeType" name="tradeType" [(ngModel)]="tradeType" required>
+            <option value="buy">Buy</option>
+            <option value="sell">Sell</option>
+        </select>
+    </div>
+    <div>
+        <label for="shareName">Share Name:</label>
+        <select id="shareName" name="shareName" [(ngModel)]="shareName" required>
+            <option *ngFor="let share of shares" [value]="share.id">{{ share.name }}</option>
+            <!-- Add other share options here -->
+        </select>
+    </div>
+    <div>
+        <label for="amount">Amount:</label>
+        <input type="number" id="amount" name="amount" [(ngModel)]="amount" (input)="calculateOverallPrice()" required>
+    </div>
+    <div>
+        <label for="pricePerUnit">Price Per Unit:</label>
+        <input type="number" id="pricePerUnit" name="pricePerUnit" [(ngModel)]="pricePerUnit"
+            (input)="calculateOverallPrice()" required>
+    </div>
+    <div>
+        <label for="overallPrice">Overall Price:</label>
+        <input type="number" id="overallPrice" name="overallPrice" [(ngModel)]="overallPrice" readonly>
+    </div>
+    <button type="submit" [disabled]="tradeForm.invalid">Submit</button>
+</form>

@@ -2,22 +2,22 @@
 <table>
     <thead>
         <tr>
-            <th>Trader</th>
             <th>Type</th>
             <th>Share</th>
             <th>Amount</th>
             <th>Price Per Unit</th>
             <th>Overall Price</th>
+            <th>Delete Request</th>
         </tr>
     </thead>
     <tbody>
         <tr *ngFor="let request of requests">
-            <td>{{ request.owner }}</td>
             <td>{{ request.type }}</td>
             <td>{{ request.share }}</td>
             <td>{{ request.amount }}</td>
             <td>{{ request.price }}</td>
             <td>{{ request.amount * request.price }}</td>
+            <td (click)="removeRequest(request.id)">Delete</td>
             <!-- Add other columns here -->
         </tr>
     </tbody>
