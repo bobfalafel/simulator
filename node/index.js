@@ -20,8 +20,6 @@ function initializeTradeIds(){
   });
 }
 
-
-
 function performBuyTrade(buyer, seller, share, item) {
   jsonData.shares[jsonData.shares.indexOf(share)].currentPrice = item.price;
   jsonData.traders[jsonData.traders.indexOf(buyer)].money -= item.amount * item.price;
@@ -79,14 +77,80 @@ function preformTrades() {
             );
           }
         } else {
-          performBuyTrade(buyer, share, item);
-          jsonData.requests = jsonData.requests.filter(request => request.id !== item.id);
+          jsonData.shares[jsonData.shares.indexOf(share)].currentPrice = item.price;
+        jsonData.traders[jsonData.traders.indexOf(buyer)].money -= item.amount * item.price;
+
+        let existingShare = buyer.shares.find(s => s.id === share.id);
+        if (existingShare) {
+          existingShare.amount += item.amount; // Add to existing shares
+        } else {
+          buyer.shares.push({ id: share.id, amount: item.amount }); // Push new share object
+        }
+
+        jsonData.shares[jsonData.shares.indexOf(share)].amount -= item.amount;
+        jsonData.requests = jsonData.requests.filter(request => request.id != item.id);
+        }
+      }
+      if (item.type === "sell" && item.price <= share.currentPrice) {
+        // Perform sell trade logic
+        let existingShare = buyer.shares.find(s => s.id === share.id);
+        if (existingShare && existingShare.amount >= item.amount) {
+          jsonData.shares[jsonData.shares.indexOf(share)].currentPrice = item.price;
+          jsonData.traders[jsonData.traders.indexOf(buyer)].money += item.amount * item.price;
+
+          existingShare.amount -= item.amount; // Subtract sold amount
+          if(existingShare.amount==0){
+            buyer.shares = buyer.shares.filter(s=> s.id !== share.id);
+          }
+          jsonData.shares[jsonData.shares.indexOf(share)].amount += item.amount;
+          jsonData.requests = jsonData.requests.filter(request => request.id != item.id);
         }
       }
     }
   });
 }
 
+
+function preformTrades2() {
+  jsonData.requests.forEach(item => {
+    let share = jsonData.shares.find(share => share.id === item.share);
+    let owner = jsonData.traders.find(trader => trader.id === item.owner);
+
+    if (share && owner) {
+      if (item.type === "buy" && item.price >= share.currentPrice) {
+        // Perform buy trade logic
+        jsonData.shares[jsonData.shares.indexOf(share)].currentPrice = item.price;
+        jsonData.traders[jsonData.traders.indexOf(owner)].money -= item.amount * item.price;
+
+        let existingShare = owner.shares.find(s => s.id === share.id);
+        if (existingShare) {
+          existingShare.amount += item.amount; // Add to existing shares
+        } else {
+          owner.shares.push({ id: share.id, amount: item.amount }); // Push new share object
+        }
+
+        jsonData.shares[jsonData.shares.indexOf(share)].amount -= item.amount;
+        jsonData.requests = jsonData.requests.filter(request => request.id != item.id);
+      }
+
+      if (item.type === "sell" && item.price <= share.currentPrice) {
+        // Perform sell trade logic
+        let existingShare = owner.shares.find(s => s.id === share.id);
+        if (existingShare && existingShare.amount >= item.amount) {
+          jsonData.shares[jsonData.shares.indexOf(share)].currentPrice = item.price;
+          jsonData.traders[jsonData.traders.indexOf(owner)].money += item.amount * item.price;
+
+          existingShare.amount -= item.amount; // Subtract sold amount
+          if(existingShare.amount==0){
+            owner.shares = owner.shares.filter(s=> s.id !== share.id);
+          }
+          jsonData.shares[jsonData.shares.indexOf(share)].amount += item.amount;
+          jsonData.requests = jsonData.requests.filter(request => request.id != item.id);
+        }
+      }
+    }
+  });
+}
 
 
 preformTrades();
