@@ -7,6 +7,8 @@ import { TradersComponent } from './traders/traders.component';
 import { RequestsComponent } from './requests/requests.component';
 import { MyRequestsComponent } from './my-requests/my-requests.component';
 import { MakeRequestComponent } from './make-request/make-request.component';
+import { ShareDetailsComponent } from './share-details/share-details.component';
+import { TraderDetailsComponent } from './trader-details/trader-details.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -16,6 +18,8 @@ const routes: Routes = [
   { path: 'requests', component: RequestsComponent },
   { path: 'my-requests', component: MyRequestsComponent },
   { path: 'make-request', component: MakeRequestComponent },
+  { path: 'share/:id', component: ShareDetailsComponent },
+  { path: 'trader/:id', component: TraderDetailsComponent },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
 ];
 

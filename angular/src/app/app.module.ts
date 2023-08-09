@@ -13,9 +13,11 @@ import { TradersComponent } from './traders/traders.component';
 import { RequestsComponent } from './requests/requests.component';
 import { MyRequestsComponent } from './my-requests/my-requests.component';
 import { MakeRequestComponent } from './make-request/make-request.component';
+import { ShareDetailsComponent } from './share-details/share-details.component';
+import { TraderDetailsComponent } from './trader-details/trader-details.component';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, HomeComponent, SharesComponent, NavbarComponent, TradersComponent, RequestsComponent, MyRequestsComponent, MakeRequestComponent],
+  declarations: [AppComponent, LoginComponent, HomeComponent, SharesComponent, NavbarComponent, TradersComponent, RequestsComponent, MyRequestsComponent, MakeRequestComponent, ShareDetailsComponent, TraderDetailsComponent],
   imports: [BrowserModule, AppRoutingModule, FormsModule, HttpClientModule],
   providers: [],
   bootstrap: [AppComponent],

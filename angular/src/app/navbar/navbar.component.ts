@@ -22,7 +22,7 @@ export class NavbarComponent {
     // Preserve the current route while refreshing the component
     const currentRoute = this.router.url;
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-      this.router.navigate([currentRoute]); // Navigate back to the current route
+      this.router.navigate(['/login']); // Navigate back to the login route
     });
   }
 }

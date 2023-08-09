@@ -24,7 +24,9 @@ export class HomeComponent implements OnInit {
 
           // Fetch the list of available shares
           this.http
-            .get<any[]>('http://localhost:3000/shares')
+            .get<any[]>('http://localhost:3000/shares', {
+              withCredentials: true,
+            })
             .subscribe((data) => {
               this.shares = data; // Store the list of shares
 

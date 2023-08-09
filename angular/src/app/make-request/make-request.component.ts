@@ -20,7 +20,9 @@ export class MakeRequestComponent implements OnInit {
   ngOnInit() {
     // Fetch logged trader data
     this.http
-      .get('http://localhost:3000/make-request', { withCredentials: true })
+      .get('http://localhost:3000/make-request', {
+        withCredentials: true,
+      })
       .subscribe(
         (response) => {
           this.loggedTrader = response;
@@ -31,9 +33,13 @@ export class MakeRequestComponent implements OnInit {
       );
 
     // Fetch available shares data
-    this.http.get<any[]>('http://localhost:3000/shares').subscribe((data) => {
-      this.shares = data;
-    });
+    this.http
+      .get<any[]>('http://localhost:3000/shares', {
+        withCredentials: true,
+      })
+      .subscribe((data) => {
+        this.shares = data;
+      });
   }
 
   // Handle error responses

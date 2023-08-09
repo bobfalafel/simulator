@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { error } from 'console';
 
 @Component({
   selector: 'app-my-requests',
@@ -9,7 +11,7 @@ import { HttpClient } from '@angular/common/http';
 export class MyRequestsComponent implements OnInit {
   requests: any[] = []; // Array to store requests
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit(): void {
     // Fetch the logged-in user's requests from the server
@@ -17,9 +19,14 @@ export class MyRequestsComponent implements OnInit {
       .get<any[]>('http://localhost:3000/my-requests', {
         withCredentials: true, // Include cookies for authentication
       })
-      .subscribe((data) => {
-        this.requests = data; // Store fetched requests in the component property
-      });
+      .subscribe(
+        (data) => {
+          this.requests = data; // Store fetched requests in the component property
+        },
+        (error) => {
+          this.handleError(error);
+        }
+      );
   }
 
   // Function to remove a request
@@ -40,5 +47,15 @@ export class MyRequestsComponent implements OnInit {
         }
       );
     window.location.reload(); // Reload the page to reflect changes
+  }
+
+  handleError(error: any) {
+    if (error.status === 401) {
+      // If unauthorized (status code 401), redirect to the login page
+      this.router.navigate(['/login']);
+    } else {
+      // Handle other error cases
+      console.error('An error occurred:', error);
+    }
   }
 }

@@ -9,8 +9,10 @@
     <tbody>
         <!-- Loop through each trader in the traders array -->
         <tr *ngFor="let trader of traders">
-            <!-- Display the trader's name in a table cell -->
-            <td>{{ trader.name }}</td>
+            <!-- Make the trader's name clickable and redirect to the corresponding URL -->
+            <td>
+                <a [routerLink]="['/trader', trader.id]">{{ trader.name }}</a>
+            </td>
             <!-- Display the trader's balance in a table cell -->
             <td>{{ trader.money }}</td>
         </tr>

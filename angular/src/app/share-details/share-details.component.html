@@ -1,0 +1,25 @@
+<h2>Share Details:</h2>
+
+<div *ngIf="shareDetails">
+    <h3>{{ shareDetails.share.name }}</h3>
+    <p>Current Price: {{ shareDetails.share.currentPrice }}</p>
+    <p>Amount available for that price: {{ shareDetails.share.amount }}</p>
+</div>
+
+<div *ngIf="shareDetails.buyRequests.length > 0">
+    <h3>Open Buy Orders:</h3>
+    <ul>
+        <li *ngFor="let buyRequest of shareDetails.buyRequests">
+            Owner: {{ buyRequest.ownerName }} | Price: {{ buyRequest.price }} | Amount: {{ buyRequest.amount }}
+        </li>
+    </ul>
+</div>
+
+<div *ngIf="shareDetails.sellRequests.length > 0">
+    <h3>Open Sell Orders:</h3>
+    <ul>
+        <li *ngFor="let sellRequest of shareDetails.sellRequests">
+            Owner: {{ sellRequest.ownerName }} | Price: {{ sellRequest.price }} | Amount: {{ sellRequest.amount }}
+        </li>
+    </ul>
+</div>

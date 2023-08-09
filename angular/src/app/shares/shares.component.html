@@ -9,8 +9,11 @@
     <tbody>
         <!-- Loop through each 'share' in the 'shares' array -->
         <tr *ngFor="let share of shares">
-            <td>{{ share.name }}</td> <!-- Display the share's name -->
-            <td>{{ share.currentPrice }}</td> <!-- Display the share's current price -->
+            <td>
+                <!-- Use routerLink to navigate to the share details route -->
+                <a [routerLink]="['/share', share.id]">{{ share.name }}</a>
+            </td>
+            <td>{{ share.currentPrice }}</td>
         </tr>
     </tbody>
 </table>

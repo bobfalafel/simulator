@@ -21,6 +21,7 @@ function initializeTradeIds(){
 
 // Function to perform a buy trade
 function performBuyTrade(buyer, seller, share, item) {
+  console.log(item);
   // Update share price and trader money
   jsonData.shares[jsonData.shares.indexOf(share)].currentPrice = item.price;
   jsonData.traders[jsonData.traders.indexOf(buyer)].money -= item.amount * item.price;
@@ -85,9 +86,20 @@ function preformTrades() {
               request.id !== item.id && request.id !== sellRequest.id
             );
           }
-        } else {
-          performBuyTrade(buyer, share, item);
-          jsonData.requests = jsonData.requests.filter(request => request.id !== item.id);
+        } else if (share.amount >= item.amount) {
+          jsonData.shares[jsonData.shares.indexOf(share)].currentPrice = item.price;
+          jsonData.traders[jsonData.traders.indexOf(buyer)].money -= item.amount * item.price;
+          if(!buyer.shares){
+            buyer.shares =[];
+          }
+          let existingShare = buyer.shares.find(s => s.id === share.id);
+          if(existingShare){
+            existingShare.amount += item.amount;
+          }
+          else{
+            buyer.shares.push({ id: share.id, amount: item.amount });
+          }
+          jsonData.requests = jsonData.requests.filter(request => request.id != item.id);
         }
       }
 
@@ -177,17 +189,64 @@ app.get('/make-request', validateToken, async (req, res) => {
 });
 
 // Route to fetch the list of shares
-app.get('/shares', (req, res) =>{
+app.get('/shares', validateToken, (req, res) =>{
   res.send(jsonData.shares);
 });
 
+// Route to fetch details of a specific share by ID
+app.get('/shares/:id', validateToken, (req, res) => {
+  const shareId = req.params.id; // Get the share ID from the URL parameter
+  const share = jsonData.shares.find(share => share.id === shareId);
+  if (share) {
+    const buyRequests = jsonData.requests.filter(
+      request => request.share === shareId && request.type === 'buy'
+    );
+    const sellRequests = jsonData.requests.filter(
+      request => request.share === shareId && request.type === 'sell'
+    );
+    const response = {
+      share,
+      buyRequests,
+      sellRequests
+    };
+    res.status(200).send(response);
+  } else {
+    res.status(404).send('Share not found.');
+  }
+});
+
+
 // Route to fetch the list of traders
-app.get('/traders', (req, res) =>{
+app.get('/traders', validateToken, (req, res) =>{
   res.send(jsonData.traders);
 });
 
+// Route to fetch a trader's information by ID
+app.get('/traders/:id', validateToken, (req, res) => {
+  const traderId = req.params.id; // Get the trader's ID from the route parameters
+  const trader = jsonData.traders.find(trader => trader.id === traderId);
+  if (!trader) {
+    return res.status(404).send('Trader not found.');
+  }
+
+  // Fetch the trader's shares and requests
+  const traderShares = trader.shares ? trader.shares : [];
+  const traderRequests = jsonData.requests.filter(request => request.owner === traderId);
+
+  // Create a new object containing trader's information, shares, and requests
+  const traderInfo = {
+    id: trader.id,
+    name: trader.name,
+    money: trader.money,
+    shares: traderShares,
+    requests: traderRequests,
+  };
+
+  res.status(200).send(traderInfo);
+});
+
 // Route to fetch and send modified requests data
-app.get('/requests', (req, res) =>{
+app.get('/requests', validateToken, (req, res) =>{
   let sendRequests = [];
   jsonData.requests.forEach(item => {
     const ownerTrader = jsonData.traders.find(trader => trader.id === item.owner);
@@ -210,7 +269,6 @@ app.get('/requests', (req, res) =>{
 app.get('/logout', validateToken, (req, res) =>{
   res.clearCookie('burseToken');
   res.status(200).send('Logged out!');
-  res.redirect('/login');
 });
 
 // Route to create a new trade request (with validation)

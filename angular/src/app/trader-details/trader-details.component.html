@@ -1,0 +1,45 @@
+<h2>Trader Details</h2>
+<div *ngIf="trader">
+    <p><strong>Name:</strong> {{ trader.name }}</p>
+    <p><strong>Balance:</strong> {{ trader.money }}</p>
+    <br>
+    <div *ngIf="trader.shares.length > 0">
+        <h3>Owned Shares</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Share</th>
+                    <th>Amount Owned</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let share of trader.shares">
+                    <td>{{ getShareNameById(share.id) }}</td>
+                    <td>{{ share.amount }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <br>
+    </div>
+    <div *ngIf="trader.requests.length > 0">
+        <h3>Trade Requests</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Share</th>
+                    <th>Amount</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let request of trader.requests">
+                    <td>{{ request.type }}</td>
+                    <td>{{ getShareNameById(request.share) }}</td>
+                    <td>{{ request.amount }}</td>
+                    <td>{{ request.price }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

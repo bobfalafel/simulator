@@ -3,97 +3,97 @@
     {
       "id": "1",
       "name": "Apple",
-      "currentPrice": 926,
+      "currentPrice": 4293,
       "amount": 15000
     },
     {
       "id": "2",
       "name": "Microsoft",
-      "currentPrice": 872,
+      "currentPrice": 531,
       "amount": 10000
     },
     {
       "id": "3",
       "name": "Tesla",
-      "currentPrice": 2899,
+      "currentPrice": 4318,
       "amount": 1000
     },
     {
       "id": "4",
       "name": "Ford",
-      "currentPrice": 134,
+      "currentPrice": 332,
       "amount": 99968
     },
     {
       "id": "5",
       "name": "Gamestop",
-      "currentPrice": 231,
+      "currentPrice": 771,
       "amount": 229676
     },
     {
       "id": "6",
       "name": "Meta",
-      "currentPrice": 445,
+      "currentPrice": 572,
       "amount": 35000
     },
     {
       "id": "7",
       "name": "Uniliver",
-      "currentPrice": 375,
+      "currentPrice": 209,
       "amount": 17000
     },
     {
       "id": "8",
       "name": "BMW",
-      "currentPrice": 807,
+      "currentPrice": 586,
       "amount": 10000
     },
     {
       "id": "10",
       "name": "McDonalds",
-      "currentPrice": 384,
+      "currentPrice": 1365,
       "amount": 45000
     },
     {
       "id": "11",
       "name": "Burger King",
-      "currentPrice": 566,
+      "currentPrice": 3658,
       "amount": 30000
     },
     {
       "id": "12",
       "name": "Samsung",
-      "currentPrice": 549,
+      "currentPrice": 205,
       "amount": 12000
     },
     {
       "id": "13",
       "name": "Xiaomi",
-      "currentPrice": 336,
+      "currentPrice": 438,
       "amount": 100000
     },
     {
       "id": "14",
       "name": "HP",
-      "currentPrice": 749,
+      "currentPrice": 165,
       "amount": 1500
     },
     {
       "id": "15",
       "name": "Dyson",
-      "currentPrice": 6867,
+      "currentPrice": 4337,
       "amount": 160
     },
     {
       "id": "16",
       "name": "GoldenShare",
-      "currentPrice": 314775,
+      "currentPrice": 5230,
       "amount": 1
     },
     {
       "id": "17",
       "name": "CheapShare",
-      "currentPrice": 847,
+      "currentPrice": 1479,
       "amount": 100000000
     }
   ],
@@ -106,7 +106,13 @@
     {
       "id": "2",
       "name": "Tal",
-      "money": 5000000
+      "money": 4993800,
+      "shares": [
+        {
+          "id": "7",
+          "amount": 26
+        }
+      ]
     },
     {
       "id": "3",
@@ -206,5 +212,14 @@
       "money": 100000
     }
   ],
-  "requests": []
+  "requests": [
+    {
+      "id": 1,
+      "owner": "2",
+      "type": "buy",
+      "share": "2",
+      "amount": 3,
+      "price": 1
+    }
+  ]
 }
