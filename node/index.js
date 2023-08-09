@@ -11,6 +11,15 @@ const fs = require('fs');
 
 let tradeIdCounter = 1; // Initialize the counter with a starting value
 
+//initialize the jsonData fields I made for later use.
+if(!jsonData.completedTrades){
+  jsonData.completedTrades = [];
+}
+if(!jsonData.requests){
+  jsonData.requests = [];
+}
+
+
 // Function to initialize unique trade IDs
 function initializeTradeIds(){
   jsonData.requests.forEach(item => {
