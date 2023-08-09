@@ -42,4 +42,27 @@
             </tbody>
         </table>
     </div>
+    <div *ngIf="trader.completedTrades.length > 0">
+        <h3>completed Requests</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Buyer</th>
+                    <th>Seller</th>
+                    <th>Share</th>
+                    <th>Amount</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let request of trader.completedTrades">
+                    <td>{{ request.buyer }}</td>
+                    <td>{{ request.seller }}</td>
+                    <td>{{ getShareNameById(request.share) }}</td>
+                    <td>{{ request.amount }}</td>
+                    <td>{{ request.price }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>

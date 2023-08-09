@@ -28,7 +28,7 @@ export class TraderDetailsComponent implements OnInit {
       })
       .subscribe((data) => {
         this.trader = data;
-        console.log(this.trader);
+
         this.http
           .get<any[]>(`http://localhost:3000/shares`, {
             withCredentials: true,

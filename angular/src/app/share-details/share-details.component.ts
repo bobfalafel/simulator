@@ -10,7 +10,12 @@ import { HttpClient } from '@angular/common/http';
 export class ShareDetailsComponent implements OnInit {
   traders: any[] = [];
   shareId: string = '';
-  shareDetails: any = { buyRequests: [], sellRequests: [], share: {} };
+  shareDetails: any = {
+    buyRequests: [],
+    sellRequests: [],
+    share: {},
+    lastCompletedTrades: [],
+  };
 
   constructor(private route: ActivatedRoute, private http: HttpClient) {}
 

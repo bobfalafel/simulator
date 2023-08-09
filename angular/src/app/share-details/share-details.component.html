@@ -23,3 +23,12 @@
         </li>
     </ul>
 </div>
+
+<div *ngIf="shareDetails.lastCompletedTrades.length > 0">
+<h3>Latest Completed Trades:</h3>
+<ul>
+    <li *ngFor="let completedTrade of shareDetails.lastCompletedTrades">
+        Buyer: {{ completedTrade.buyer }} | Seller: {{ completedTrade.seller }} | Price: {{ completedTrade.price }} | Amount: {{ completedTrade.amount }}
+    </li>
+</ul>
+</div>

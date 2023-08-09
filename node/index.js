@@ -82,6 +82,13 @@ function preformTrades() {
           if (seller) {
             performSellTrade(seller, share, sellRequest);
             performBuyTrade(buyer, seller, share, item);
+            jsonData.completedTrades.push({
+              buyer: buyer.name,
+              seller: seller.name,
+              share: share.id,
+              amount: item.amount,
+              price: item.price
+            });
             jsonData.requests = jsonData.requests.filter(request =>
               request.id !== item.id && request.id !== sellRequest.id
             );
@@ -99,6 +106,13 @@ function preformTrades() {
           else{
             buyer.shares.push({ id: share.id, amount: item.amount });
           }
+          jsonData.completedTrades.push({
+              buyer: buyer.name,
+              seller: "Burse",
+              share: share.id,
+              amount: item.amount,
+              price: item.price
+            });
           jsonData.requests = jsonData.requests.filter(request => request.id != item.id);
         }
       }
@@ -114,6 +128,13 @@ function preformTrades() {
             buyer.shares = buyer.shares.filter(s => s.id !== share.id);
           }
           jsonData.shares[jsonData.shares.indexOf(share)].amount += item.amount;
+          jsonData.completedTrades.push({
+              buyer: "Burse",
+              seller: seller.name,
+              share: share.id,
+              amount: item.amount,
+              price: item.price
+            });
           jsonData.requests = jsonData.requests.filter(request => request.id != item.id);
         }
       }
@@ -204,10 +225,16 @@ app.get('/shares/:id', validateToken, (req, res) => {
     const sellRequests = jsonData.requests.filter(
       request => request.share === shareId && request.type === 'sell'
     );
+
+    const lastCompletedTrades = jsonData.completedTrades
+      .filter(trade => trade.share === share.id)
+      .slice(-10); // Get the last 10 trades or less if there are fewer
+
     const response = {
       share,
       buyRequests,
-      sellRequests
+      sellRequests,
+      lastCompletedTrades
     };
     res.status(200).send(response);
   } else {
@@ -233,6 +260,11 @@ app.get('/traders/:id', validateToken, (req, res) => {
   const traderShares = trader.shares ? trader.shares : [];
   const traderRequests = jsonData.requests.filter(request => request.owner === traderId);
 
+  // Fetch the last 8 completed trades made by the trader
+  const traderCompletedTrades = jsonData.completedTrades
+    .filter(trade => trade.buyer === trader.name || trade.seller === trader.name)
+    .slice(-8); // Get the last 8 trades or less if there are fewer than 8
+
   // Create a new object containing trader's information, shares, and requests
   const traderInfo = {
     id: trader.id,
@@ -240,6 +272,7 @@ app.get('/traders/:id', validateToken, (req, res) => {
     money: trader.money,
     shares: traderShares,
     requests: traderRequests,
+    completedTrades: traderCompletedTrades
   };
 
   res.status(200).send(traderInfo);
