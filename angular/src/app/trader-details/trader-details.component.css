@@ -1,0 +1,60 @@
+/* trader-details.component.css */
+
+/* Styling for the header */
+h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Styling for the main content area */
+div {
+    margin: 20px 0;
+}
+
+/* Styling for the trader details */
+p {
+    margin-bottom: 10px;
+}
+
+/* Styling for the table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+/* Styling for table headers */
+th {
+    background-color: #f0f0f0;
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+}
+
+/* Styling for table rows */
+tr {
+    transition: background-color 0.2s;
+}
+
+/* Alternate row background color */
+tr:nth-child(even) {
+    background-color: #f8f8f8;
+}
+
+/* Styling for table cells */
+td {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+/* Additional styling for responsiveness */
+@media screen and (max-width: 600px) {
+
+    th,
+    td {
+        padding: 8px;
+    }
+}

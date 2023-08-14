@@ -1,12 +1,12 @@
 <h2>Share Details:</h2>
 
-<div *ngIf="shareDetails">
+<div class="share-details-container" *ngIf="shareDetails">
     <h3>{{ shareDetails.share.name }}</h3>
     <p>Current Price: {{ shareDetails.share.currentPrice }}</p>
     <p>Amount available for that price: {{ shareDetails.share.amount }}</p>
 </div>
 
-<div *ngIf="shareDetails.buyRequests.length > 0">
+<div class="trade-request" *ngIf="shareDetails.buyRequests.length > 0">
     <h3>Open Buy Orders:</h3>
     <ul>
         <li *ngFor="let buyRequest of shareDetails.buyRequests">
@@ -15,7 +15,7 @@
     </ul>
 </div>
 
-<div *ngIf="shareDetails.sellRequests.length > 0">
+<div class="trade-request" *ngIf="shareDetails.sellRequests.length > 0">
     <h3>Open Sell Orders:</h3>
     <ul>
         <li *ngFor="let sellRequest of shareDetails.sellRequests">
@@ -24,7 +24,7 @@
     </ul>
 </div>
 
-<div *ngIf="shareDetails.lastCompletedTrades.length > 0">
+<div class="completed-trades-container" *ngIf="shareDetails.lastCompletedTrades.length > 0">
 <h3>Latest Completed Trades:</h3>
 <ul>
     <li *ngFor="let completedTrade of shareDetails.lastCompletedTrades">

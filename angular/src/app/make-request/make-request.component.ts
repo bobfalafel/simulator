@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-make-request',
   templateUrl: './make-request.component.html',
+  styleUrls: ['./make-request.component.css'],
 })
 export class MakeRequestComponent implements OnInit {
   shares: any[] = []; // Array to hold share data

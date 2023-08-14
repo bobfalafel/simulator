@@ -1,6 +1,3 @@
-<!-- This div displays a welcome message if the 'loggedTrader' property is truthy -->
-<div *ngIf="loggedTrader">Welcome, {{ loggedTrader.name }}</div>
-
 <!-- Form to submit a trade request when submitted using 'submitForm()' method -->
 <form (ngSubmit)="submitForm()" #tradeForm="ngForm">
 

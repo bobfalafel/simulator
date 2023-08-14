@@ -1,0 +1,33 @@
+/* Apply some basic styling to the welcome message */
+div {
+    margin: 20px 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Style the table and its elements */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+/* Style the table headers */
+thead th {
+    background-color: #f2f2f2;
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+    font-weight: bold;
+}
+
+/* Style the table rows */
+tbody tr {
+    border: 1px solid #ddd;
+}
+
+/* Style the table cells */
+td {
+    padding: 8px;
+    text-align: left;
+}
